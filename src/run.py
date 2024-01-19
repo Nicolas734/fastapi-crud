@@ -2,9 +2,10 @@ from typing import Union
 from fastapi import FastAPI
 from uvicorn import run
 from pydantic import BaseModel
-from config import Config
+from utils.config import Config
 from db.db import engine
 from models.base import Base
+from api.base import api_router
 
 
 config = Config()
@@ -13,6 +14,7 @@ project_name =      config._g.get("SERVER", "PROJECT_NAME")
 project_version =   config._g.get("SERVER", "PROJECT_VERSION")
 
 app = FastAPI(title=project_name, version=project_version)
+app.include_router(api_router)
 
 
 def create_tables():
@@ -44,4 +46,4 @@ if __name__ == "__main__":
     port = config._g.get("SERVER", "PORT")
     log_level = config._g.get("SERVER", "LOG_LEVEL")
     create_tables()
-    run(app, host="0.0.0.0", port=8001, log_level="debug")
+    run("run:app", host="0.0.0.0", port=8001, log_level="debug", reload=True)

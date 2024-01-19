@@ -2,7 +2,7 @@ from models.base_class import Base
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
+from utils.crypt import Crypt
 
 
 class User(Base):
@@ -16,7 +16,7 @@ class User(Base):
 
 
     def set_password(self, psw):
-        self.password_hash = generate_password_hash(psw)
+        self.password_hash = Crypt.get_hash(psw)
 
     def check_password(self, psw):
-        return check_password_hash(self.password, psw)
+        return Crypt.verify_hash(self.password, psw)

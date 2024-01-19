@@ -1,8 +1,22 @@
 from typing import Union
 from fastapi import FastAPI
+from uvicorn import run
 from pydantic import BaseModel
+from config import Config
+from db.db import engine
+from models.base import Base
 
-app = FastAPI()
+
+config = Config()
+
+project_name =      config._g.get("SERVER", "PROJECT_NAME")
+project_version =   config._g.get("SERVER", "PROJECT_VERSION")
+
+app = FastAPI(title=project_name, version=project_version)
+
+
+def create_tables():
+    Base.metadata.create_all(bind=engine)
 
 
 class Item(BaseModel):
@@ -26,5 +40,8 @@ def update_item(item_id: int, item: Item):
 
 
 if __name__ == "__main__":
-    from uvicorn import run
+    host = config._g.get("SERVER", "HOST")
+    port = config._g.get("SERVER", "PORT")
+    log_level = config._g.get("SERVER", "LOG_LEVEL")
+    create_tables()
     run(app, host="0.0.0.0", port=8001, log_level="debug")

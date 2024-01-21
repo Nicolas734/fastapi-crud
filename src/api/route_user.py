@@ -9,7 +9,7 @@ from service.user import create_new_user, find_all_users
 
 router = APIRouter()
 
-@router.post(path="/create", status_code=status.HTTP_200_OK, response_model=ResponseCreateUser)
+@router.post(path="/create", status_code=status.HTTP_201_CREATED, response_model=ResponseCreateUser)
 def create(res: Response, user: UserCreate, db:Session = Depends(get_db)):
     user, ret = create_new_user(user=user, db=db)
     if not user and not ret:
